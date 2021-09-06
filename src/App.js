@@ -29,6 +29,9 @@ const options = [
 
 ];
 
+const stateoptions = [
+];
+
 const { Option,Control } = components;
 
 /**
@@ -71,7 +74,7 @@ const IconOption = props => (
 
 
     <div  className="flex"> 
-
+{/* 
       <img
 
         src={props.data.icon}
@@ -80,7 +83,7 @@ const IconOption = props => (
 
         alt={props.data.label}
 
-      />
+      /> */}
 
       <p className ="ml-2">{props.data.label}</p>
 
@@ -96,406 +99,533 @@ const IconOption = props => (
  */
 
 function App() {
+	/**
+	 * @description headers to be used in axios to access apis
+	 */
 
+	const headers = {
+		"Content-Type": "application/json",
 
- /**
- * @description headers to be used in axios to access apis
- */
+		"Access-Control-Allow-Origin": "*",
+	};
 
-  const headers = {
+	/**
+	 * @description setting all required states to be used in this component
+	 */
 
-    'Content-Type': 'application/json',
+	const [allcontinentsdata, setallcontinentsdata] = useState([]);
 
-    'Access-Control-Allow-Origin': '*'
+	const [allcountriesdata, setallcountriesdata] = useState([]);
 
-  }
+	const [allstatesdata, setallstatesdata] = useState([]);
 
-  /**
-   * @description setting all required states to be used in this component
-   */
+	const [selecteddate, setselecteddate] = useState("");
 
-  const [allcontinentsdata,setallcontinentsdata] = useState([])
+	const [datenotselected, setdatenotselected] = useState(false);
 
-  const [allcountriesdata,setallcountriesdata] = useState([])
+	const [selectedcountry, setselectedcountry] = useState("");
 
-  const [selecteddate,setselecteddate] = useState("")
+	const [selectedstate, setselectedstate] = useState("");
 
-  const [datenotselected,setdatenotselected] = useState(false)
-
-  const [selectedcountry,setselectedcountry] = useState("")
-
-  const [selectedcountrydata,setselectedcountrydata] = useState({})
-
-  /**
-   * @description codes inside this useEffect will be called when component is rendered
-   */
-
-  useEffect( async ()=>{
-
-    await axios.get(`https://corona.lmao.ninja/v2/countries/Rwanda?yesterday&strict&query%20`,headers)
-
-        .then(response => {
-
-          setselectedcountrydata(response.data)
-
-        })
-
-      
-        await axios.get(`https://corona.lmao.ninja/v2/continents?yesterday&sort`,headers)
-      
-        .then(response => {
-      
-          setallcontinentsdata(response.data)
-      
-        })
-
-      
-        axios.get(`https://corona.lmao.ninja/v2/countries?yesterday&sort`,headers)
-      
-        .then( response => {
-      
-          setallcountriesdata(response.data)
-
-            response.data.map(countrydata => {
-
-              options.push({ value: countrydata.country, label: countrydata.country, icon: countrydata.countryInfo.flag })
-
-            })
-
-          })
-  
-      },[])
-
-
-
-  /**
-   * @description managing responsiveness of continent sliders
-   */
-
-
-  const responsive = {
-    
-    superLargeDesktop: {
-    
-      breakpoint: { max: 1500, min: 3000 },
-    
-      items: 2.5
-      
-    },
-    
-    desktop: {
-     
-      breakpoint: { max: 1500, min: 500 },
-    
-      items: 2.5
-    
-    },
-    
-    tablet: {
-    
-        breakpoint: { max: 1024, min: 464 },
-    
-      items: 1
-      
-    },
-    
-    mobile: {
-  
-        breakpoint: { max: 464, min: 0 },
-  
-        items: 1
-   
-    }
-  
-  };
-
-  /**
-   * @description adding styles on country selector on both control and option
-   */
-  
-  const styles = {
-  
-    control: styles => ({ ...styles, backgroundColor: 'white',minWidth: '',fontFamily: 'Roboto',border: '1px solid hsl(0deg 0% 70% / 38%)',fontSize: '13px',fontWeight: 900,outline: 'none'}),
-  
-    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-  
-      return {
-  
-        ...styles,
-  
-        fontFamily: 'Roboto',
-  
-        fontSize: '13px',
-  
-        fontWeight: 900
-  
-      };
-  
-    }
-  
-  };
-
-
-  /**
-   * @description handling country selector changes and setting selected country in state
-   */
-  
-  const getselectedcountrychange = (selectedOption )  => {
-  
-    setselectedcountry(selectedOption.value)
-  
-  }
-
-  /**
-   * @description handling date selector changes and setting selected date in state
-   */
-
-  const handledatechange = (e) => {
-  
-    setselecteddate(e.target.value)
-  
-  }
-
-  
-  /**
-   * @description handling submit button onclick, calling api and passing required parameters for selected country
-   */
-
-  const handleformsubmission = (e) => {
-
-    e.preventDefault()
-
-    /* validating forms */
-
-    if(selecteddate === "") {
-    
-      setdatenotselected(true)
-    
-      alert("date is not choosen, choose date and try again")
-    
-    }
-    
-    else if(selecteddate !== ""){
-     
-      setdatenotselected(false)
-
-      axios.get(`https://corona.lmao.ninja/v2/countries/${selectedcountry}?${selecteddate}&strict&query%20`,headers)
-  
-      .then(response => {
-          setselectedcountrydata(response.data)
-  
-        })
-  
-    }
-  
-  }
-
-
-  return (
-    
-    <div className="App">
-      
-      <div className="app-upper-part">
-          
-          {/* app navigation bar */}
-
-          <Navbar />
-          
-          <h1 className="updates-title text-center text-white font-bold">UPDATES</h1>
-          
-          <p className="search-title text-sm text-center text-white font-sm mb-4">Search a country</p>
-
-          {/* search form */}
-
-          <div>
-            
-            <form  className="flex justify-between search-form">
-                
-                <Select
-                
-                defaultValue={options[0]}
-                
-                options={options}
-                
-                components={{ Option: IconOption }} 
-                
-                styles = {styles}
-                
-                onChange = {getselectedcountrychange}
-                
-                className="select-country"
-              
-                />
-
-                {datenotselected ? 
-                
-                <input type="date" className="choose-date" style={{border: '1px solid red'}} onChange={handledatechange} />
-                :
-                
-                  <input type="date" className="choose-date" onChange={handledatechange} />
-                
-                }
-              
-              <button onClick={handleformsubmission}>SUBMIT</button>
-
-            </form>
-          
-          </div>
-
-          <div className="mt-12">
-            
-            <div className="country-brief-data"> 
-            
-                <h1 className="text-center text-xl pt-8">{selectedcountrydata.cases}</h1>
-            
-                <p className="text-center text-sm pt-8">Cumulatively</p>
-            
-            </div>
-
-            <div className="country-detailed-data p-4 grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-2 xs:grid-cols-2 gap-2 justify-between "> 
-            
-              <div>
-            
-                <h1>11,270</h1>
-            
-                <p className="small-text">Tests</p>
-            
-                <p className="small-numbers">{selectedcountrydata.testes}</p>
-            
-              </div>
-
-              <div>
-            
-                <h1>{selectedcountrydata.todayCases}</h1>
-            
-                <p className="small-text">Positive cases</p>
-            
-                <p className="small-numbers">{selectedcountrydata.cases}</p>
-            
-              </div>
-
-              <div>
-            
-                <h1>{selectedcountrydata.critical}</h1>
-            
-                <p className="small-text">Hospitalized</p>
-            
-                <p className="small-numbers">{selectedcountrydata.active}</p>
-            
-              </div>
-
-              <div>
-            
-                <h1>{selectedcountrydata.recovered}</h1>
-            
-                <p className="small-text">Recovered</p>
-            
-                <p className="small-numbers">{selectedcountrydata.recovered}</p>
-            
-              </div>
-
-              <div>
-            
-                <h1>{selectedcountrydata.todayDeaths}</h1>
-            
-                <p className="small-text">Death</p>
-            
-                <p className="small-numbers">{selectedcountrydata.deaths}</p>
-            
-              </div>
-
-              <div>
-            
-                <h1>11,270</h1>
-            
-                <p className="small-text">Vaccinated</p>
-            
-                <p className="small-numbers">2,188,881</p>
-            
-              </div>
-            
-            </div>
-
-          </div>
-
-          <h1 className="text-center mt-28 per-continent-title">PER CONTINENTS</h1>
-
-          <Carousel  
-              
-              className="mt-16 mb-16 pt-4 pb-4" 
-              
-              responsive={responsive}
-              
-              keyBoardControl={true}
-              
-              draggable={true}
-              
-              swipeable = {true}>
-              
-                  {allcontinentsdata.map((continentdata) =>
-              
-                  <ContinentDataComponent key={continentdata.continent} {...continentdata} />
-                  
-                  )}
-                  
-                  </Carousel>
-              
-              <br />
-              
-              <div className="grid lg:grid-cols-2 xl:grid-cols-2 md:grid-cols-2 sm:grid-cols-1">
-                  
-                  <div className="my-image">
-                  
-                  </div>
-
-                  <div className="my-portifolio">
-                    
-                    <h1 className="ml-16 mt-24">NTWARI EGIDE</h1>
-              
-                    <p className="ml-16 mt-4 skills">
-                      
-                      I am a software developer who is skilled in working in Big Groups using Agile methodology and devops, expert in programming , passionate in coding , best UI & UX Designer with best upcoming trends. <br /> <br />
-
-                      My front end skills: React Js,Vue Js, Angular Js, Nuxt Js,Php - Laravel. <br />
-                      Best achievement ever: React Js Developer @ <a className="font-light link" href="https://yombi.rw/">yombi</a> <br />
-                      My github: <a className="font-light link" href="https://github.com/ntwari-egide">ntwari egide github</a>
-
-                    </p>
-
-                    <p className="ml-16 mt-8 date">19 August 2021</p>
-              
-                  </div>
-              
-              </div>
-
-              <div className="footer">
-                 
-                  <h1 className="text-center pt-16 font-bold">REACH ME</h1>
-                 
-                  <h2 className="text-center mt-8 font-bold">Email</h2>
-                 
-                  <p className="text-center font-bold">ntwariegide2@gmail.com</p>
-
-                  <h2 className="text-center mt-8 font-bold">Phone</h2>
-                 
-                  <p className="text-center font-bold">call:  +250 780 964 4307,+250 788881955</p>
-                 
-                  <p className="text-center font-bold">whatsap: +250 727 509 011</p>
-
-                  <h2 className="text-center mt-8 font-bold">Profile</h2>
-                 
-                  <p> <a className="text-center font-bold" href="https://www.linkedin.com/in/ntwari-egide-93b53218a/">ntwari egide,linked in profile</a> </p>
-                 
-                  <p> <a className="text-center font-bold" href="https://docs.google.com/document/d/1pp_HSpSiOKsbRZRGuCCL46kdKHd4mbwLFkCDIYbaBu4/edit?usp=sharing">ntwari egide,my cv</a> </p>
-                  
-              </div>
-      
-      </div>
-    
-    </div>
-
-  );
+	const [selectedcountrydata, setselectedcountrydata] = useState({});
 
+	const [selectedstatedata, setselectedstatedata] = useState({});
+
+	/**
+	 * @description codes inside this useEffect will be called when component is rendered
+	 */
+
+	useEffect(async () => {
+		await axios
+			.get(
+				`https://corona.lmao.ninja/v2/countries/Rwanda?yesterday&strict&query%20`,
+				headers
+			)
+
+			.then((response) => {
+				setselectedcountrydata(response.data);
+			});
+
+		await axios
+			.get(`https://corona.lmao.ninja/v2/continents?yesterday&sort`, headers)
+
+			.then((response) => {
+				setallcontinentsdata(response.data);
+			});
+
+		axios
+			.get(
+				`https://corona.lmao.ninja/v2/continents?yesterday=true&sort`,
+				headers
+			)
+
+			.then((response) => {
+				setallcountriesdata(response.data);
+
+				response.data.map((countrydata) => {
+					options.push({
+						value: countrydata.country,
+						label: countrydata.country
+						// icon: countrydata.countryInfo.flag,
+					});
+				});
+			});
+
+		axios
+			.get(`https://corona.lmao.ninja/v2/states?sort&yesterday`, headers)
+
+			.then((response) => {
+				setallstatesdata(response.data);
+
+				response.data.map((countrydata) => {
+					stateoptions.push({
+						value: countrydata.state,
+						label: countrydata.state,
+						icon: "",
+					});
+				});
+			});
+	}, []);
+
+	/**
+	 * @description managing responsiveness of continent sliders
+	 */
+
+	const responsive = {
+		superLargeDesktop: {
+			breakpoint: { max: 1500, min: 3000 },
+
+			items: 2.5,
+		},
+
+		desktop: {
+			breakpoint: { max: 1500, min: 500 },
+
+			items: 2.5,
+		},
+
+		tablet: {
+			breakpoint: { max: 1024, min: 464 },
+
+			items: 1,
+		},
+
+		mobile: {
+			breakpoint: { max: 464, min: 0 },
+
+			items: 1,
+		},
+	};
+
+	/**
+	 * @description adding styles on country selector on both control and option
+	 */
+
+	const styles = {
+		control: (styles) => ({
+			...styles,
+			backgroundColor: "white",
+			minWidth: "",
+			fontFamily: "Roboto",
+			border: "1px solid hsl(0deg 0% 70% / 38%)",
+			fontSize: "13px",
+			fontWeight: 900,
+			outline: "none",
+		}),
+
+		option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+			return {
+				...styles,
+
+				fontFamily: "Roboto",
+
+				fontSize: "13px",
+
+				fontWeight: 900,
+			};
+		},
+	};
+
+	/**
+	 * @description handling country selector changes and setting selected country in state
+	 */
+
+	const getselectedcountrychange = (selectedOption) => {
+		setselectedcountry(selectedOption.value);
+	};
+
+	/**
+	 * @description handling state selector changes and setting selected country in state
+	 */
+	const getselectedstatechange = (selectedOption) => {
+		setselectedstate(selectedOption.value);
+	};
+
+	/**
+	 * @description handling date selector changes and setting selected date in state
+	 */
+
+	const handledatechange = (e) => {
+		setselecteddate(e.target.value);
+	};
+
+	/**
+	 * @description handling submit button onclick, calling api and passing required parameters for selected country
+	 */
+
+	const handleformsubmission = (e) => {
+		e.preventDefault();
+
+		/* validating forms */
+
+		if (selecteddate === "") {
+			setdatenotselected(true);
+
+			alert("date is not choosen, choose date and try again");
+		} else if (selecteddate !== "") {
+			setdatenotselected(false);
+
+			axios
+				.get(
+					`https://corona.lmao.ninja/v2/countries/${selectedcountry}?${selecteddate}&strict&query%20`,
+					headers
+				)
+
+				.then((response) => {
+					setselectedcountrydata(response.data);
+				});
+		}
+	};
+
+	/**
+	 * @description handling submit button onclick, calling api and passing required parameters for selected country
+	 */
+
+	const handleformstateubmission = (e) => {
+		e.preventDefault();
+
+		/* validating forms */
+
+		if (selecteddate === "") {
+			setdatenotselected(true);
+
+			alert("date is not choosen, choose date and try again");
+		} else if (selecteddate !== "") {
+			setdatenotselected(false);
+
+			axios
+				.get(
+					`https://corona.lmao.ninja/v2/states/${selectedstate}?${selecteddate}=true`,
+					headers
+				)
+
+				.then((response) => {
+					setselectedstatedata(response.data);
+				});
+
+				// console.log("data: ", selectedstatedata);
+		}
+	};
+
+	return (
+		<div className="App">
+			<div className="app-upper-part">
+				{/* app navigation bar */}
+
+				<Navbar />
+
+				<h1 className="updates-title text-center text-white font-bold">
+					UPDATES
+				</h1>
+
+				{/* New card implementation */}
+
+				<p className="search-title text-sm text-center text-white font-sm mb-4">
+					Search a state
+				</p>
+
+				{/* search form */}
+
+				<div>
+					<form className="flex justify-between search-form">
+						<Select
+							defaultValue={stateoptions[0]}
+							options={stateoptions}
+							components={{ Option: IconOption }}
+							styles={styles}
+							onChange={getselectedstatechange}
+							className="select-country"
+						/>
+
+						{datenotselected ? (
+							<input
+								type="date"
+								className="choose-date"
+								style={{ border: "1px solid red" }}
+								onChange={handledatechange}
+							/>
+						) : (
+							<input
+								type="date"
+								className="choose-date"
+								onChange={handledatechange}
+							/>
+						)}
+
+						<button onClick={handleformstateubmission}>SUBMIT</button>
+					</form>
+				</div>
+
+				<div className="mt-12">
+					<div className="country-brief-data">
+						<h1 className="text-center text-xl pt-8">
+							{selectedstatedata.cases}
+						</h1>
+
+						<p className="text-center text-sm pt-8">Cumulatively</p>
+					</div>
+
+					<div className="country-detailed-data p-4 grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-2 xs:grid-cols-2 gap-2 justify-between ">
+						<div>
+							<h1>11,270</h1>
+
+							<p className="small-text">Tests</p>
+
+							<p className="small-numbers">{selectedstatedata.tests}</p>
+						</div>
+
+						<div>
+							<h1>{selectedstatedata.todayCases}</h1>
+
+							<p className="small-text">Positive cases</p>
+
+							<p className="small-numbers">{selectedstatedata.cases}</p>
+						</div>
+
+						<div>
+							<h1>440</h1>
+
+							<p className="small-text">Hospitalized</p>
+
+							<p className="small-numbers">{selectedstatedata.active}</p>
+						</div>
+
+						<div>
+							<h1>50000</h1>
+
+							<p className="small-text">Recovered</p>
+
+							<p className="small-numbers">2000</p>
+						</div>
+
+						<div>
+							<h1>{selectedstatedata.todayDeaths}</h1>
+
+							<p className="small-text">Death</p>
+
+							<p className="small-numbers">{selectedstatedata.deaths}</p>
+						</div>
+
+						<div>
+							<h1>11,270</h1>
+
+							<p className="small-text">Vaccinated</p>
+
+							<p className="small-numbers">2,188,881</p>
+						</div>
+					</div>
+				</div>
+
+				{/* end of new card implementation  */}
+
+				<p className="mt-32 search-title text-sm text-center text-black font-sm mb-4">
+					Search a country
+				</p>
+
+				{/* search form */}
+
+				<div>
+					<form className="flex justify-between search-form">
+						<Select
+							defaultValue={options[0]}
+							options={options}
+							components={{ Option: IconOption }}
+							styles={styles}
+							onChange={getselectedcountrychange}
+							className="select-country"
+						/>
+
+						{datenotselected ? (
+							<input
+								type="date"
+								className="choose-date"
+								style={{ border: "1px solid red" }}
+								onChange={handledatechange}
+							/>
+						) : (
+							<input
+								type="date"
+								className="choose-date"
+								onChange={handledatechange}
+							/>
+						)}
+
+						<button onClick={handleformsubmission}>SUBMIT</button>
+					</form>
+				</div>
+
+				<div className="mt-12">
+					<div className="country-brief-data">
+						<h1 className="text-center text-xl pt-8">
+							{selectedcountrydata.cases}
+						</h1>
+
+						<p className="text-center text-sm pt-8">Cumulatively</p>
+					</div>
+
+					<div className="country-detailed-data p-4 grid lg:grid-cols-6 md:grid-cols-3 sm:grid-cols-2 gap-2 xs:grid-cols-2 gap-2 justify-between ">
+						<div>
+							<h1>11,270</h1>
+
+							<p className="small-text">Tests</p>
+
+							<p className="small-numbers">{selectedcountrydata.testes}</p>
+						</div>
+
+						<div>
+							<h1>{selectedcountrydata.todayCases}</h1>
+
+							<p className="small-text">Positive cases</p>
+
+							<p className="small-numbers">{selectedcountrydata.cases}</p>
+						</div>
+
+						<div>
+							<h1>{selectedcountrydata.critical}</h1>
+
+							<p className="small-text">Hospitalized</p>
+
+							<p className="small-numbers">{selectedcountrydata.active}</p>
+						</div>
+
+						<div>
+							<h1>{selectedcountrydata.recovered}</h1>
+
+							<p className="small-text">Recovered</p>
+
+							<p className="small-numbers">{selectedcountrydata.recovered}</p>
+						</div>
+
+						<div>
+							<h1>{selectedcountrydata.todayDeaths}</h1>
+
+							<p className="small-text">Death</p>
+
+							<p className="small-numbers">{selectedcountrydata.deaths}</p>
+						</div>
+
+						<div>
+							<h1>11,270</h1>
+
+							<p className="small-text">Vaccinated</p>
+
+							<p className="small-numbers">2,188,881</p>
+						</div>
+					</div>
+				</div>
+
+				<h1 className="text-center mt-28 per-continent-title">
+					PER CONTINENTS
+				</h1>
+
+				<Carousel
+					className="mt-16 mb-16 pt-4 pb-4"
+					responsive={responsive}
+					keyBoardControl={true}
+					draggable={true}
+					swipeable={true}
+				>
+					{allcontinentsdata.map((continentdata) => (
+						<ContinentDataComponent
+							key={continentdata.continent}
+							{...continentdata}
+						/>
+					))}
+				</Carousel>
+
+				<br />
+
+				<div className="grid lg:grid-cols-2 xl:grid-cols-2 md:grid-cols-2 sm:grid-cols-1">
+					<div className="my-image"></div>
+
+					<div className="my-portifolio">
+						<h1 className="ml-16 mt-24">NTWARI EGIDE</h1>
+
+						<p className="ml-16 mt-4 skills">
+							I am a software developer who is skilled in working in Big Groups
+							using Agile methodology and devops, expert in programming ,
+							passionate in coding , best UI & UX Designer with best upcoming
+							trends. <br /> <br />
+							My front end skills: React Js,Vue Js, Angular Js, Nuxt Js,Php -
+							Laravel. <br />
+							Best achievement ever: React Js Developer @{" "}
+							<a className="font-light link" href="https://yombi.rw/">
+								yombi
+							</a>{" "}
+							<br />
+							My github:{" "}
+							<a
+								className="font-light link"
+								href="https://github.com/ntwari-egide"
+							>
+								ntwari egide github
+							</a>
+						</p>
+
+						<p className="ml-16 mt-8 date">19 August 2021</p>
+					</div>
+				</div>
+
+				<div className="footer">
+					<h1 className="text-center pt-16 font-bold">REACH ME</h1>
+
+					<h2 className="text-center mt-8 font-bold">Email</h2>
+
+					<p className="text-center font-bold">ntwariegide2@gmail.com</p>
+
+					<h2 className="text-center mt-8 font-bold">Phone</h2>
+
+					<p className="text-center font-bold">
+						call: +250 780 964 4307,+250 788881955
+					</p>
+
+					<p className="text-center font-bold">whatsap: +250 727 509 011</p>
+
+					<h2 className="text-center mt-8 font-bold">Profile</h2>
+
+					<p>
+						{" "}
+						<a
+							className="text-center font-bold"
+							href="https://www.linkedin.com/in/ntwari-egide-93b53218a/"
+						>
+							ntwari egide,linked in profile
+						</a>{" "}
+					</p>
+
+					<p>
+						{" "}
+						<a
+							className="text-center font-bold"
+							href="https://docs.google.com/document/d/1pp_HSpSiOKsbRZRGuCCL46kdKHd4mbwLFkCDIYbaBu4/edit?usp=sharing"
+						>
+							ntwari egide,my cv
+						</a>{" "}
+					</p>
+				</div>
+			</div>
+		</div>
+	);
 }
 
 /**
@@ -503,6 +633,8 @@ function App() {
 */
 
 const ContinentDataComponent = ({...continentdata}) =>{
+
+	// console.log("content: ",continentdata);
 
   return <div className="rounded-md ml-12 continent-container">
 
