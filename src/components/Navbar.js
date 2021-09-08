@@ -2,6 +2,8 @@
  * @author: ntwari egide
  * @description Navbar component
  */
+/* eslint-disable */
+
 import React from "react";
 
 import "./navbar.css"
@@ -12,7 +14,7 @@ import LogoImage from "../assets/images/C O V I C A L C.png"
 * @description Navbar component
 */
 
-export default function Navbar({ fixed }) {
+export default function Navbar() {
 
   /**
   * @description setting required states to be used in this Navbar component

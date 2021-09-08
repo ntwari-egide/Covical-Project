@@ -1,7 +1,5 @@
-/**
- * @author: ntwari egide
- * @description App component
- */
+
+/* eslint-disable */
 
 import logo from './logo.svg';
 
