@@ -5,7 +5,7 @@ stages:
 
 build-job:
   stage: build
-  image: node
+  image: node:latest
   script: 
     - echo "Start building App"
     - npm install
@@ -17,6 +17,7 @@ build-job:
 
 Lint-job:
   stage: lint
+  image: node:latest
   script:
   - echo "Start eslint checking"
   - npm install
@@ -26,6 +27,7 @@ Lint-job:
 
 Unit-test: 
   stage: test
+  image: node:latest
   script: 
     - echo "Start testing component"
     - npm install
