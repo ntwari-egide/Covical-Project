@@ -2,6 +2,8 @@
  * @description running testing and checking if header is found in app component and many other tests using jest enzyme
  */
 
+/* eslint-disable */
+
 import React from "react";
 import { shallow, mount } from "enzyme";
 import App from "./App";
