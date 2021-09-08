@@ -1,0 +1,33 @@
+stages: 
+  - build
+  - lint
+  - test
+
+build-job:
+  stage: build
+  image: node
+  script: 
+    - echo "Start building App"
+    - npm install
+    - npm run build
+    - echo "Build successfully!"
+  only:
+    - merge_requests
+
+
+Lint-job:
+  stage: lint
+  script:
+  - echo "Start eslint checking"
+  - npm install
+  - npm run lint
+  - echo "Eslint checking is successfully done!"
+
+
+Unit-test: 
+  stage: test
+  script: 
+    - echo "Start testing component"
+    - npm install
+    - npm run test
+    - echo "Testing is successfully done!"
