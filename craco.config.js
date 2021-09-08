@@ -1,4 +1,4 @@
-module.exports = {
+/* eslint-disable */module.exports = {
     style: {
       postcss: {
         plugins: [

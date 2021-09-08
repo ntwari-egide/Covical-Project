@@ -2,6 +2,8 @@
  * @author: ntwari egide
  * @description Navbar component
  */
+/* eslint-disable */
+
 import React from "react";
 
 import "./navbar.css"
