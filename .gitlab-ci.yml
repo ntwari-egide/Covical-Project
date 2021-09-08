@@ -23,7 +23,8 @@ Lint-job:
   - npm install
   - npm run lint
   - echo "Eslint checking is successfully done!"
-
+  only:
+    - merge_requests
 
 Unit-test: 
   stage: test
@@ -33,3 +34,5 @@ Unit-test:
     - npm install
     - npm run test
     - echo "Testing is successfully done!"
+  only:
+    - merge_requests
